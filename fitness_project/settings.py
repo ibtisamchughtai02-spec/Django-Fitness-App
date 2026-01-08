@@ -99,9 +99,7 @@ else:
             },
         }
     }
-    }
-}
-"""
+
 
 # SQLite Configuration (backup - uncomment to switch back)
 """
