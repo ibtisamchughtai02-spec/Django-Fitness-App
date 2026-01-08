@@ -74,12 +74,31 @@ WSGI_APPLICATION = 'fitness_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-# Database configuration with dj_database_url
-# Supports PostgreSQL on Render, falls back to SQLite for local development
-DATABASES = {
-    'default': dj_database_url.config(default='sqlite:///db.sqlite3')
-}
-        },
+import os
+
+# Database configuration
+# Uses environment variables for production, MySQL for local development
+if os.environ.get('DATABASE_URL'):
+    # PostgreSQL on Render (if you add PostgreSQL database)
+    DATABASES = {
+        'default': dj_database_url.config(default='sqlite:///db.sqlite3')
+    }
+else:
+    # MySQL configuration (local or cloud hosted)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('MYSQL_DB', 'fitness_tracker_db'),
+            'USER': os.environ.get('MYSQL_USER', 'fitness_user'),
+            'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'fitness123'),
+            'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
+            'PORT': os.environ.get('MYSQL_PORT', '3306'),
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                'charset': 'utf8mb4',
+            },
+        }
+    }
     }
 }
 """
