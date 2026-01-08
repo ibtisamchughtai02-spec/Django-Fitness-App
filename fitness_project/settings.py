@@ -21,10 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sq=ydpr_1g09v+c=qgbdl(47pm-9p8=@ot8tmsnx53dnq@ck()'
+import os
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-dev-key-only')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
 
@@ -89,8 +90,8 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': os.environ.get('MYSQL_DB', 'fitness_tracker_db'),
-            'USER': os.environ.get('MYSQL_USER', 'fitness_user'),
-            'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'fitness123'),
+            'USER': os.environ.get('MYSQL_USER', 'root'),
+            'PASSWORD': os.environ.get('MYSQL_PASSWORD', ''),  # Set in environment variables
             'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
             'PORT': os.environ.get('MYSQL_PORT', '3306'),
             'OPTIONS': {
