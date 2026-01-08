@@ -1,0 +1,199 @@
+{% extends 'fitness_tracker/base.html' %}
+
+{% block title %}Register - Fitness Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4><i class="fas fa-user-plus"></i> Create Your Account</h4>
+                <p class="mb-0 text-muted">Join the Fitness Tracker community</p>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- User Registration Fields -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">{{ user_form.username.label }}</label>
+                                {{ user_form.username }}
+                                {% if user_form.username.help_text %}
+                                    <small class="form-text text-muted">{{ user_form.username.help_text }}</small>
+                                {% endif %}
+                                {% if user_form.username.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ user_form.username.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">{{ user_form.email.label }}</label>
+                                {{ user_form.email }}
+                                {% if user_form.email.help_text %}
+                                    <small class="form-text text-muted">{{ user_form.email.help_text }}</small>
+                                {% endif %}
+                                {% if user_form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ user_form.email.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">{{ user_form.first_name.label }}</label>
+                                {{ user_form.first_name }}
+                                {% if user_form.first_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ user_form.first_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">{{ user_form.last_name.label }}</label>
+                                {{ user_form.last_name }}
+                                {% if user_form.last_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ user_form.last_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">{{ user_form.password1.label }}</label>
+                                {{ user_form.password1 }}
+                                {% if user_form.password1.help_text %}
+                                    <small class="form-text text-muted">{{ user_form.password1.help_text }}</small>
+                                {% endif %}
+                                {% if user_form.password1.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ user_form.password1.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">{{ user_form.password2.label }}</label>
+                                {{ user_form.password2 }}
+                                {% if user_form.password2.help_text %}
+                                    <small class="form-text text-muted">{{ user_form.password2.help_text }}</small>
+                                {% endif %}
+                                {% if user_form.password2.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ user_form.password2.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    <h6><i class="fas fa-user-cog"></i> Profile Information</h6>
+                    
+                    <!-- Profile Fields -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">{{ profile_form.age.label }}</label>
+                                {{ profile_form.age }}
+                                {% if profile_form.age.help_text %}
+                                    <small class="form-text text-muted">{{ profile_form.age.help_text }}</small>
+                                {% endif %}
+                                {% if profile_form.age.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ profile_form.age.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">{{ profile_form.weight.label }}</label>
+                                {{ profile_form.weight }}
+                                {% if profile_form.weight.help_text %}
+                                    <small class="form-text text-muted">{{ profile_form.weight.help_text }}</small>
+                                {% endif %}
+                                {% if profile_form.weight.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ profile_form.weight.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">{{ profile_form.height.label }}</label>
+                                {{ profile_form.height }}
+                                {% if profile_form.height.help_text %}
+                                    <small class="form-text text-muted">{{ profile_form.height.help_text }}</small>
+                                {% endif %}
+                                {% if profile_form.height.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ profile_form.height.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">{{ profile_form.activity_level.label }}</label>
+                                {{ profile_form.activity_level }}
+                                {% if profile_form.activity_level.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ profile_form.activity_level.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">{{ profile_form.fitness_goal.label }}</label>
+                                {{ profile_form.fitness_goal }}
+                                {% if profile_form.fitness_goal.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ profile_form.fitness_goal.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </button>
+                    </div>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p class="mb-0">Already have an account? 
+                        <a href="{% url 'login' %}" class="text-decoration-none">
+                            Login here
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

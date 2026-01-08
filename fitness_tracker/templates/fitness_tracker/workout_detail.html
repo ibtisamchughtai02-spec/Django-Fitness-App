@@ -1,0 +1,184 @@
+{% extends 'fitness_tracker/base.html' %}
+
+{% block title %}{{ workout.name }} - Fitness Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-dumbbell"></i> {{ workout.name }}
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Workout Details -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Workout Information</h5>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Type:</strong></td>
+                                <td>{{ workout.get_workout_type_display }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Date:</strong></td>
+                                <td>{{ workout.date|date:"F d, Y" }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Duration:</strong></td>
+                                <td>{{ workout.duration }} minutes</td>
+                            </tr>
+                            {% if workout.calories_burned %}
+                            <tr>
+                                <td><strong>Calories Burned:</strong></td>
+                                <td>{{ workout.calories_burned|floatformat:0 }} calories</td>
+                            </tr>
+                            {% endif %}
+                            {% if workout.notes %}
+                            <tr>
+                                <td><strong>Notes:</strong></td>
+                                <td>{{ workout.notes }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h5>Workout Statistics</h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="stat-card bg-primary text-white p-3 rounded text-center">
+                                    <div class="stat-number">{{ exercises.count }}</div>
+                                    <div class="stat-label">Exercises</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card bg-success text-white p-3 rounded text-center">
+                                    <div class="stat-number">{{ total_sets }}</div>
+                                    <div class="stat-label">Total Sets</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exercises -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5>Exercises</h5>
+                            <a href="{% url 'exercise_create' workout_pk=workout.pk %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Add Exercise
+                            </a>
+                        </div>
+                        
+                        {% if exercises %}
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Exercise</th>
+                                            <th>Sets</th>
+                                            <th>Reps</th>
+                                            <th>Weight</th>
+                                            <th>Rest Time</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for exercise in exercises %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ exercise.name }}</strong>
+                                                {% if exercise.notes %}
+                                                    <br><small class="text-muted">{{ exercise.notes|truncatewords:10 }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ exercise.sets }}</td>
+                                            <td>{{ exercise.reps }}</td>
+                                            <td>
+                                                {% if exercise.weight %}
+                                                    {{ exercise.weight }} kg
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if exercise.rest_time %}
+                                                    {{ exercise.rest_time }}s
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'exercise_edit' pk=exercise.pk %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'exercise_delete' pk=exercise.pk %}" class="btn btn-sm btn-outline-danger" 
+                                                   onclick="return confirm('Delete this exercise?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-dumbbell fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No exercises added yet.</p>
+                                <a href="{% url 'exercise_create' workout_pk=workout.pk %}" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Add Your First Exercise
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-4">
+                    <a href="{% url 'workout_edit' pk=workout.pk %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit Workout
+                    </a>
+                    <a href="{% url 'workout_delete' pk=workout.pk %}" class="btn btn-danger" 
+                       onclick="return confirm('Are you sure you want to delete this workout?')">
+                        <i class="fas fa-trash"></i> Delete Workout
+                    </a>
+                    <a href="{% url 'workout_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Workouts
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.stat-card {
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+.table th {
+    border-top: none;
+}
+</style>
+{% endblock %}

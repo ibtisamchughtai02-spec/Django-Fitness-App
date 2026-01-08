@@ -1,0 +1,154 @@
+{% extends 'fitness_tracker/base.html' %}
+
+{% block title %}Progress - Fitness Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-chart-line"></i> Your Fitness Progress
+                </h4>
+            </div>
+            <div class="card-body">
+                
+                <!-- Statistics Overview -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card bg-primary text-white p-3 rounded">
+                            <div class="stat-icon">
+                                <i class="fas fa-dumbbell"></i>
+                            </div>
+                            <div class="stat-number">{{ total_workouts }}</div>
+                            <div class="stat-label">Total Workouts</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card bg-success text-white p-3 rounded">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-number">{{ total_duration }}</div>
+                            <div class="stat-label">Total Minutes</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card bg-warning text-white p-3 rounded">
+                            <div class="stat-icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="stat-number">{{ total_calories|floatformat:0 }}</div>
+                            <div class="stat-label">Calories Burned</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card bg-info text-white p-3 rounded">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="stat-number">{{ current_streak }}</div>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Workouts -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Recent Workouts</h5>
+                        {% if recent_workouts %}
+                            <div class="list-group">
+                                {% for workout in recent_workouts %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ workout.name }}</h6>
+                                        <small>{{ workout.date }}</small>
+                                    </div>
+                                    <p class="mb-1">Duration: {{ workout.duration }} minutes</p>
+                                    {% if workout.calories_burned %}
+                                        <small>Calories: {{ workout.calories_burned|floatformat:0 }}</small>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No recent workouts found.</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h5>Workout Types Distribution</h5>
+                        {% if workout_types %}
+                            {% for workout_type, data in workout_types.items %}
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <span>{{ workout_type }}</span>
+                                    <span class="badge bg-primary">{{ data.count }} ({{ data.percentage }}%)</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-primary" data-width="{{ data.percentage }}"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">No workout data available yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-4">
+                    <a href="{% url 'workout_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add New Workout
+                    </a>
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.stat-card {
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+.progress {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.progress-bar[data-width]').forEach(function(bar) {
+        bar.style.width = bar.getAttribute('data-width') + '%';
+    });
+});
+</script>
+{% endblock %}

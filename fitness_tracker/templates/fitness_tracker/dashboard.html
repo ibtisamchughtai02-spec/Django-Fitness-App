@@ -1,0 +1,192 @@
+{% extends 'fitness_tracker/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Fitness Tracker{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Welcome back, {{ user.first_name|default:user.username }}!</h1>
+    <p>Track your fitness journey and reach your goals</p>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row">
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card primary">
+            <h3>{{ total_workouts }}</h3>
+            <p>Total Workouts</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card success">
+            <h3>{{ workouts_this_month }}</h3>
+            <p>This Month</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card warning">
+            <h3>{{ total_calories|floatformat:0 }}</h3>
+            <p>Calories Burned</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card info">
+            <h3>{{ avg_duration }}</h3>
+            <p>Avg Duration (min)</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- User Profile Summary -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-user"></i> Profile Summary</h5>
+            </div>
+            <div class="card-body">
+                {% if profile %}
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h4>{{ profile.calculate_bmi }}</h4>
+                            <small>BMI</small>
+                        </div>
+                        <div class="col-6">
+                            <h4>{{ profile.weight }} kg</h4>
+                            <small>Weight</small>
+                        </div>
+                    </div>
+                    
+                    <div class="bmi-indicator 
+                        {% if profile.get_bmi_category == 'Underweight' %}bmi-underweight
+                        {% elif profile.get_bmi_category == 'Normal weight' %}bmi-normal
+                        {% elif profile.get_bmi_category == 'Overweight' %}bmi-overweight
+                        {% else %}bmi-obese{% endif %}">
+                        {{ profile.get_bmi_category }}
+                    </div>
+                    
+                    <p><strong>Goal:</strong> {{ profile.get_fitness_goal_display }}</p>
+                    <p><strong>Activity Level:</strong> {{ profile.get_activity_level_display }}</p>
+                {% else %}
+                    <p>Complete your profile to see personalized stats.</p>
+                {% endif %}
+                
+                <a href="{% url 'profile' %}" class="btn btn-primary btn-sm w-100">
+                    <i class="fas fa-edit"></i> Update Profile
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Workouts -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-dumbbell"></i> Recent Workouts</h5>
+                <a href="{% url 'workout_list' %}" class="btn btn-outline-primary btn-sm">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_workouts %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Workout</th>
+                                    <th>Type</th>
+                                    <th>Duration</th>
+                                    <th>Calories</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for workout in recent_workouts %}
+                                <tr>
+                                    <td>{{ workout.date|date:"M d" }}</td>
+                                    <td>
+                                        <a href="{% url 'workout_detail' workout.pk %}" class="text-decoration-none">
+                                            {{ workout.name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="workout-badge {{ workout.workout_type }}">
+                                            {{ workout.get_workout_type_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ workout.duration }} min</td>
+                                    <td>{{ workout.calories_burned }} cal</td>
+                                    <td>
+                                        <a href="{% url 'workout_detail' workout.pk %}" 
+                                           class="btn btn-outline-primary btn-sm" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-dumbbell fa-3x text-muted mb-3"></i>
+                        <h5>No workouts yet!</h5>
+                        <p class="text-muted">Start your fitness journey by logging your first workout.</p>
+                        <a href="{% url 'workout_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create First Workout
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Workout Types Distribution -->
+{% if workout_types %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-pie"></i> Workout Distribution</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for workout_type in workout_types %}
+                    <div class="col-md-2 col-sm-4 text-center mb-3">
+                        <div class="workout-badge {{ workout_type.workout_type }} d-inline-block mb-2">
+                            {{ workout_type.get_workout_type_display|default:workout_type.workout_type|title }}
+                        </div>
+                        <h4>{{ workout_type.count }}</h4>
+                        <small class="text-muted">workouts</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+    <a href="{% url 'quick_workout' %}" class="btn btn-success quick-action-btn" title="Quick Log">
+        <i class="fas fa-bolt"></i>
+    </a>
+    <a href="{% url 'workout_create' %}" class="btn btn-primary quick-action-btn" title="New Workout">
+        <i class="fas fa-plus"></i>
+    </a>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Add any dashboard-specific JavaScript here
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh stats every 30 seconds
+    setInterval(function() {
+        // You can implement AJAX stats refresh here if needed
+    }, 30000);
+});
+</script>
+{% endblock %}
